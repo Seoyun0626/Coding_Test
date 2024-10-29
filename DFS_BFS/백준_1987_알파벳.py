@@ -2,31 +2,25 @@ import sys
 input = sys.stdin.readline
 sys.setrecursionlimit(10**6)
 info = []
+alpha = [False] * 26
 move = [[-1, 0], [1, 0], [0, -1], [0, 1]]
-check = []
 max_cnt = 1
-
 r, c = map(int, input().split())
 for _ in range(r):
     info.append(list(input().rstrip()))
-print(info)
-
-visited = [[False for _ in range(c)] for _ in range(r)]
-
 def dfs(y, x, cnt):
     # print("enter dfs", y, x, cnt)
     global max_cnt
-    check.append(info[y][x])
-    visited[y][x] = True
     # print("가능한 좌표", check, visited, y, x)
-    if max_cnt < cnt:
-        max_cnt = cnt
+    max_cnt = max(max_cnt, cnt)
+    for i in range(4):
+        nx, ny = x + move[i][0], y + move[i][1]
 
-    for dy, dx in move:
-        if 0 <= y + dy < r and 0 <= x + dx < c and info[y + dy][x + dx] not in check and not visited[y + dy][x + dx]:
-            dfs(y + dy, x + dx, cnt + 1)
-            visited[y + dy][x + dx] = False
-            check.pop()
+        if 0 <= ny < r and 0 <= nx < c:
+            if not alpha[info[ny][nx]]:
+                alpha[info[ny][nx]] = True
+                dfs(ny, nx, cnt + 1)
+                alpha[info[ny][nx]] = False
+alpha[info[0][0]] = True
 dfs(0, 0, 1)
 print(max_cnt)
-
